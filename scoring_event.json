@@ -1,0 +1,12 @@
+{
+    "id": "486585db-75f2-467d-a825-b37777c96529",
+    "game_id": "6690cf59-79de-445c-b9f7-04b7f1ee7990",
+    "timestamp": "2018-10-10T22:03:56.413Z",
+    "data": {
+        "code": "pitch",
+        "attributes": {
+            "advances_count": true,
+            "result": "ball_in_play"
+        }
+    }
+}
