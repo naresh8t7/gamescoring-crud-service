@@ -11,7 +11,7 @@ We want you to build a simple baseball and softball score keeping REST API that 
 
 ## Instructions to run and test
 
-The service uses an in memory db. Used below two variants of in memory db.
+The service uses an in memory db. Used below two variants of in memory db. Its configured in app.env file defaulted to memdb.
   - map based structure
   - <a href="https://github.com/hashicorp/go-memdb"> go-memdb </a>
 ```
@@ -153,7 +153,7 @@ Scoring event with ID 486585db-75f2-467d-a825-b37777c96530 has been deleted
 Request:
 curl --location --request GET 'http://localhost:8085/metrics'
 Response:
-Contains API metrics and various statistics go routines and gc etc.
+Contains API metrics and various statistics related to go routines and gc etc.
 ```
 
 ### Health endpoint
@@ -166,9 +166,9 @@ Response:
 
 ### Assumptions
 
-The game id and scoring event id are unique. If the end points are called with same ids it will be override the existing data as I am using in memory structure. But in real db application, we can throw an error.
+The game id and scoring event id are unique. If the end points are called with same ids it will override the existing data as I am using in memory structure. But in real db application, we can throw an error.
 
 ### Libraries Used
-- <a href="github.com/spf13/viper">Viper </a>: For configiring application params in config file.
+- <a href="github.com/spf13/viper">Viper </a>: For configuring application params in config file.
 - <a href="github.com/gorilla/mux"> Mux </a>: For http server implementation
 - <a href="https://github.com/hashicorp/go-memdb"> go-memdB </a>: For In memory DB

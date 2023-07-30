@@ -2,6 +2,8 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"gamescoring/internal/model"
 	"net/http"
 	"time"
@@ -11,32 +13,29 @@ import (
 
 func (h *HttpServer) ListGames(w http.ResponseWriter, r *http.Request) {
 	defer h.statsCollection("ListGames", time.Now())()
-	resp := Response{}
 	games, err := h.repository.ListGames()
 	if err != nil {
-		resp.Status = "Failed to list Games"
-		resp.Error = err.Error()
-		w.WriteHeader(http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
-		resp.Status = "Succesfully fetched games"
 		w.WriteHeader(http.StatusOK)
 	}
-	j, _ := json.Marshal(&games)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Write(j)
+	writeResponse(w, games)
 }
 
 func (h *HttpServer) CreateGame(w http.ResponseWriter, r *http.Request) {
 	defer h.statsCollection("CreateGame", time.Now())()
 	req := model.Game{}
 	err := json.NewDecoder(r.Body).Decode(&req)
-	resp := Response{}
 	if err != nil {
-		resp.Status = "Invalid request body"
-		resp.Error = err.Error()
-		w.WriteHeader(http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	if err := validateGame(req); err != nil {
+		http.Error(w, fmt.Sprintf("Game cannot be created: %v", err), http.StatusBadRequest)
+		return
+	}
+	resp := Response{}
 	_, err = h.repository.UpsertGame(&req)
 	if err != nil {
 		resp.Status = "Failed to create game"
@@ -46,9 +45,7 @@ func (h *HttpServer) CreateGame(w http.ResponseWriter, r *http.Request) {
 		resp.Status = "Succesfully created Game"
 		w.WriteHeader(http.StatusOK)
 	}
-	j, _ := json.Marshal(&resp)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Write(j)
+	writeResponse(w, resp)
 }
 
 func (h *HttpServer) UpdateGame(w http.ResponseWriter, r *http.Request) {
@@ -57,13 +54,16 @@ func (h *HttpServer) UpdateGame(w http.ResponseWriter, r *http.Request) {
 	gameID := vars["gameID"]
 	req := model.Game{}
 	err := json.NewDecoder(r.Body).Decode(&req)
-	resp := Response{}
+
 	if err != nil {
-		resp.Status = "Invalid request body"
-		resp.Error = err.Error()
-		w.WriteHeader(http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	if err := validateGame(req); err != nil {
+		http.Error(w, fmt.Sprintf("Game cannot be updated: %v", err), http.StatusBadRequest)
+		return
+	}
+	resp := Response{}
 	_, err = h.repository.UpsertGame(&req)
 	if err != nil {
 		resp.Status = "Failed to update game " + gameID
@@ -73,9 +73,7 @@ func (h *HttpServer) UpdateGame(w http.ResponseWriter, r *http.Request) {
 		resp.Status = "Succesfully updated game"
 		w.WriteHeader(http.StatusOK)
 	}
-	j, _ := json.Marshal(&resp)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Write(j)
+	writeResponse(w, resp)
 }
 
 func (h *HttpServer) GetGame(w http.ResponseWriter, r *http.Request) {
@@ -91,10 +89,7 @@ func (h *HttpServer) GetGame(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	j, _ := json.Marshal(&game)
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Write(j)
+	writeResponse(w, game)
 }
 
 func (h *HttpServer) DeleteGame(w http.ResponseWriter, r *http.Request) {
@@ -112,4 +107,16 @@ func (h *HttpServer) DeleteGame(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Game with ID " + gameID + " has been deleted"))
+
+}
+
+func validateGame(req model.Game) error {
+	var err error
+	if req.End.Before(req.Start) {
+		err = errors.New("end Time is less than the start time")
+	}
+	if req.Start.Before(req.Arrive) {
+		err = errors.New("start Time is less than the arrive time")
+	}
+	return err
 }

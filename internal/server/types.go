@@ -19,8 +19,18 @@ type HttpServer struct {
 type IGameScoringService interface {
 	CreateGame(w http.ResponseWriter, r *http.Request)
 	GetGame(w http.ResponseWriter, r *http.Request)
+	ListGames(w http.ResponseWriter, r *http.Request)
+	UpdateGame(w http.ResponseWriter, r *http.Request)
+	DeleteGame(w http.ResponseWriter, r *http.Request)
+
 	CreateScoringEvent(w http.ResponseWriter, r *http.Request)
 	GetScoringEvent(w http.ResponseWriter, r *http.Request)
+	ListScoringEvents(w http.ResponseWriter, r *http.Request)
+	UpdateScoringEvent(w http.ResponseWriter, r *http.Request)
+	DeleteScoringEvent(w http.ResponseWriter, r *http.Request)
+
+	Home(w http.ResponseWriter, r *http.Request)
+	Health(w http.ResponseWriter, r *http.Request)
 }
 
 type Response struct {

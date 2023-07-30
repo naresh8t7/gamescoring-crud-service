@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"gamescoring/internal/db"
 	"gamescoring/internal/metrics"
+	"gamescoring/internal/model"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -41,6 +43,23 @@ func TestCreateGameHandler(t *testing.T) {
 	httpServer.CreateGame(rec, req)
 
 	assert.Equal(t, http.StatusOK, rec.Code, "Response status should be OK")
+}
+
+func TestCreateGameHandler_Failure(t *testing.T) {
+	httpServer := GetHttpServer()
+	game := model.Game{
+		ID:     "6690cf59-79de-445c-b9f7-04b7f1ee7991",
+		Start:  time.Now().Add(3 * time.Hour),
+		End:    time.Now().Add(-1 * time.Hour),
+		Arrive: time.Now().Add(2 * time.Hour),
+	}
+	gameJSON, _ := json.Marshal(game)
+	req, _ := http.NewRequest("POST", "/games", bytes.NewBuffer(gameJSON))
+	rec := httptest.NewRecorder()
+
+	httpServer.CreateGame(rec, req)
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code, "Response status should not be OK")
 }
 
 func TestUpdateGameHandler(t *testing.T) {

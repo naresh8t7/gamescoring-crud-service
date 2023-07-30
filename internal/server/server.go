@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"gamescoring/internal/db"
 	"gamescoring/internal/metrics"
@@ -67,4 +68,10 @@ func (h *HttpServer) Health(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s<br><br>", time.Now().Format(time.RFC1123Z))
 	fmt.Fprintf(w, "%s<br>", "Game Scoring Service. Status : OK")
 	fmt.Fprintf(w, "</pre>")
+}
+
+func writeResponse(w http.ResponseWriter, resp interface{}) {
+	j, _ := json.Marshal(&resp)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Write(j)
 }

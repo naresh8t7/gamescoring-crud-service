@@ -60,6 +60,19 @@ func TestGetScoringEventHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rec.Code, "Response status should be OK")
 }
 
+func TestCreateScoringEventHandler_Failure(t *testing.T) {
+	httpServer := GetHttpServer()
+	event := db.Events[0]
+	event.GameID = "dummy-id"
+	ScoringEventJSON, _ := json.Marshal(event)
+	req, _ := http.NewRequest("POST", "/scoringEvent", bytes.NewBuffer(ScoringEventJSON))
+	rec := httptest.NewRecorder()
+
+	httpServer.CreateScoringEvent(rec, req)
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code, "Response status should not be OK")
+}
+
 func TestDeleteScoringEventHandler(t *testing.T) {
 	httpServer := GetHttpServer()
 	httpServer.Router.Methods("DELETE").Path("/scoringEvent/{eventID}").HandlerFunc(httpServer.DeleteScoringEvent)

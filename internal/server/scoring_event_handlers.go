@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"gamescoring/internal/model"
 	"net/http"
 	"time"
@@ -11,31 +12,29 @@ import (
 
 func (h *HttpServer) ListScoringEvents(w http.ResponseWriter, r *http.Request) {
 	defer h.statsCollection("ListScoringEvents", time.Now())()
-	resp := Response{}
 	events, err := h.repository.ListScoringEvents()
 	if err != nil {
-		resp.Status = "Failed to list scoring events"
-		resp.Error = err.Error()
-		w.WriteHeader(http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
-		resp.Status = "Succesfully scoring events"
 		w.WriteHeader(http.StatusOK)
 	}
-	j, _ := json.Marshal(&events)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Write(j)
+	writeResponse(w, events)
 }
 
 func (h *HttpServer) CreateScoringEvent(w http.ResponseWriter, r *http.Request) {
 	defer h.statsCollection("CreateScoringEvent", time.Now())()
 	req := model.ScoringEvent{}
 	err := json.NewDecoder(r.Body).Decode(&req)
-	resp := Response{}
 	if err != nil {
-		resp.Status = "Invalid request body"
-		resp.Error = err.Error()
-		w.WriteHeader(http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
+
+	if err := h.validateScoringEvent(req); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to create scoring event, Error in fetching game: %v", err), http.StatusBadRequest)
+		return
+	}
+	resp := Response{}
 	_, err = h.repository.UpsertScoringEvent(&req)
 	if err != nil {
 		resp.Status = "Failed to Create scoring Event"
@@ -45,9 +44,7 @@ func (h *HttpServer) CreateScoringEvent(w http.ResponseWriter, r *http.Request) 
 		resp.Status = "Succesfully created scoring event"
 		w.WriteHeader(http.StatusOK)
 	}
-	j, _ := json.Marshal(&resp)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Write(j)
+	writeResponse(w, resp)
 }
 
 func (h *HttpServer) UpdateScoringEvent(w http.ResponseWriter, r *http.Request) {
@@ -56,13 +53,15 @@ func (h *HttpServer) UpdateScoringEvent(w http.ResponseWriter, r *http.Request) 
 	eventID := vars["eventID"]
 	req := model.ScoringEvent{}
 	err := json.NewDecoder(r.Body).Decode(&req)
-	resp := Response{}
 	if err != nil {
-		resp.Status = "Invalid request body"
-		resp.Error = err.Error()
-		w.WriteHeader(http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	if err := h.validateScoringEvent(req); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to update scoring event, Error in fetching game: %v", err), http.StatusBadRequest)
+		return
+	}
+	resp := Response{}
 	_, err = h.repository.UpsertScoringEvent(&req)
 	if err != nil {
 		resp.Status = "Failed to update scoring event " + eventID
@@ -72,9 +71,7 @@ func (h *HttpServer) UpdateScoringEvent(w http.ResponseWriter, r *http.Request) 
 		resp.Status = "Succesfully updated scoring event"
 		w.WriteHeader(http.StatusOK)
 	}
-	j, _ := json.Marshal(&resp)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Write(j)
+	writeResponse(w, resp)
 }
 
 func (h *HttpServer) GetScoringEvent(w http.ResponseWriter, r *http.Request) {
@@ -90,10 +87,7 @@ func (h *HttpServer) GetScoringEvent(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	j, _ := json.Marshal(&scoringEvent)
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Write(j)
+	writeResponse(w, scoringEvent)
 }
 
 func (h *HttpServer) DeleteScoringEvent(w http.ResponseWriter, r *http.Request) {
@@ -111,4 +105,9 @@ func (h *HttpServer) DeleteScoringEvent(w http.ResponseWriter, r *http.Request) 
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Scoring event with ID " + eventID + " has been deleted"))
+}
+
+func (h *HttpServer) validateScoringEvent(req model.ScoringEvent) error {
+	_, err := h.repository.Game(req.GameID)
+	return err
 }
