@@ -19,6 +19,8 @@ The service provides the usage with both an in memory db and persistent db (Post
   - map based structure (map)
   - <a href="https://github.com/hashicorp/go-memdb"> go-memdb </a> (memdb)
   - Postgres db (db)
+
+### To run the service
 ```
 To run the application
  cd back-end-naresh8t7
@@ -26,6 +28,7 @@ To run the application
  
 ```
 
+### To run the tests
 ```
 To run the tests
  cd back-end-naresh8t7
@@ -33,7 +36,8 @@ To run the tests
  
 ```
 
-### Create Game End Point
+### To test the endpoints
+#### Create Game End Point
 ```
 Request:
 curl --location --request POST 'http://localhost:8085/games' \
@@ -49,7 +53,7 @@ Response:
 {"status":"Successly created game"}
 ```
 
-### Update Game End Point
+#### Update Game End Point
 Request:
 curl --location --request PUT 'http://localhost:8085/games/6690cf59-79de-445c-b9f7-04b7f1ee7990' \
 --header 'Content-Type: application/json' \
@@ -63,7 +67,7 @@ Response:
 {"status":"Succesfully updated game"}
 '
 
-### Get Game End Point
+#### Get Game End Point
 ```
 Request:
 curl --location --request GET 'http://localhost:8085/games/6690cf59-79de-445c-b9f7-04b7f1ee7990'
@@ -71,7 +75,7 @@ Response:
 {"id":"6690cf59-79de-445c-b9f7-04b7f1ee7990","start":"2018-10-10T22:00:00Z","end":"2018-10-11T01:00:00Z","arrive":"2018-10-10T21:30:00Z"}
 ```
 
-### List Games Endpoint
+#### List Games Endpoint
 ```
 Request:
 curl --location --request GET 'http://localhost:8085/games'
@@ -79,7 +83,7 @@ Response:
 [{"id":"6690cf59-79de-445c-b9f7-04b7f1ee7991","start":"2023-07-30T02:42:37.563855-04:00","end":"2023-07-30T05:42:37.563859-04:00","arrive":"2023-07-30T01:42:37.563859-04:00"},{"id":"6690cf59-79de-445c-b9f7-04b7f1ee7992","start":"2023-07-30T05:42:37.563859-04:00","end":"2023-07-30T08:42:37.563859-04:00","arrive":"2023-07-30T04:42:37.563859-04:00"},{"id":"6690cf59-79de-445c-b9f7-04b7f1ee7993","start":"2023-07-30T08:42:37.56386-04:00","end":"2023-07-30T11:42:37.56386-04:00","arrive":"2023-07-30T07:42:37.56386-04:00"},{"id":"6690cf59-79de-445c-b9f7-04b7f1ee7994","start":"2023-07-30T11:42:37.563861-04:00","end":"2023-07-30T14:42:37.563861-04:00","arrive":"2023-07-30T10:42:37.563861-04:00"}]
 ```
 
-### Delete Game Endpoint
+#### Delete Game Endpoint
 ```
 Request:
 curl --location --request DELETE 'http://localhost:8085/games/6690cf59-79de-445c-b9f7-04b7f1ee7991'
@@ -87,7 +91,7 @@ Response:
 Game with ID 6690cf59-79de-445c-b9f7-04b7f1ee7991 has been deleted
 ```
 
-### Create Scoring Event EndPoint
+#### Create Scoring Event EndPoint
 ```
 Request:
 curl --location --request POST 'http://localhost:8085/scoringEvents' \
@@ -109,7 +113,7 @@ Response:
 {"status":"Successly created scoring event"}
 ```
 
-### Update Scoring Event EndPoint
+#### Update Scoring Event EndPoint
 Request:
 curl --location --request PUT 'http://localhost:8085/scoringEvents/486585db-75f2-467d-a825-b37777c96529' \
 --header 'Content-Type: application/json' \
@@ -129,7 +133,7 @@ Response:
 {"status":"Succesfully updated scoring event"}
 '
 
-### Get Scoring event End Point
+#### Get Scoring event End Point
 ```
 Request:
 curl --location --request GET 'http://localhost:8085/scoringEvents/486585db-75f2-467d-a825-b37777c96529'
@@ -137,7 +141,7 @@ Response:
 {"id":"486585db-75f2-467d-a825-b37777c96529","game_id":"6690cf59-79de-445c-b9f7-04b7f1ee7990","timestamp":"2018-10-10T22:03:56.413Z","data":{"code":"pitch","attributes":{"advances_count":true,"result":"ball_in_play"}}}
 ```
 
-### List Scoring Events Endpoint
+#### List Scoring Events Endpoint
 ```
 Request:
 curl --location --request GET 'http://localhost:8085/scoringEvents'
@@ -145,7 +149,7 @@ Response:
 [{"id":"486585db-75f2-467d-a825-b37777c96530","game_id":"6690cf59-79de-445c-b9f7-04b7f1ee7991","timestamp":"2023-07-30T02:47:37.563861-04:00","data":{"code":"pitch","attributes":{"advances_count":true,"result":"ball_in_play"}}},{"id":"486585db-75f2-467d-a825-b37777c96531","game_id":"6690cf59-79de-445c-b9f7-04b7f1ee7992","timestamp":"2023-07-30T05:47:37.563861-04:00","data":{"code":"pitch","attributes":{"advances_count":true,"result":"ball_in_play"}}},{"id":"486585db-75f2-467d-a825-b37777c96532","game_id":"6690cf59-79de-445c-b9f7-04b7f1ee7993","timestamp":"2023-07-30T08:57:37.563861-04:00","data":{"code":"pitch","attributes":{"advances_count":true,"result":"ball_in_play"}}},{"id":"486585db-75f2-467d-a825-b37777c96533","game_id":"6690cf59-79de-445c-b9f7-04b7f1ee7994","timestamp":"2023-07-30T11:47:37.563862-04:00","data":{"code":"pitch","attributes":{"advances_count":true,"result":"ball_in_play"}}}]
 ```
 
-### Delete Scoring Event Endpoint
+#### Delete Scoring Event Endpoint
 ```
 Request:
 curl --location --request DELETE 'http://localhost:8085/scoringEvents/486585db-75f2-467d-a825-b37777c96530'
@@ -153,7 +157,7 @@ Response:
 Scoring event with ID 486585db-75f2-467d-a825-b37777c96530 has been deleted
 ```
 
-### Metrics endpoint
+#### Metrics endpoint
 ```
 Request:
 curl --location --request GET 'http://localhost:8085/metrics'
@@ -161,7 +165,7 @@ Response:
 Contains API metrics and various statistics related to go routines and gc etc.
 ```
 
-### Health endpoint
+#### Health endpoint
 ```
 Request:
 curl --location --request GET 'http://localhost:8085/health'
@@ -177,3 +181,4 @@ The game id and scoring event id are unique. If the end points are called with s
 - <a href="github.com/spf13/viper">Viper </a>: For configuring application params in config file.
 - <a href="github.com/gorilla/mux"> Mux </a>: For http server implementation
 - <a href="https://github.com/hashicorp/go-memdb"> go-memdB </a>: For In memory DB
+- <a href="https://github.com/go-gorm/gorm"> gorm </a>:  ORM library for Golang
