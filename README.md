@@ -11,9 +11,14 @@ We want you to build a simple baseball and softball score keeping REST API that 
 
 ## Instructions to run and test
 
-The service uses an in memory db. Used below two variants of in memory db. Its configured in app.env file defaulted to memdb.
-  - map based structure
-  - <a href="https://github.com/hashicorp/go-memdb"> go-memdb </a>
+### Pre-requisites for running the service
+  - For running against persistence store, postgres db should be available in the system running on port 5432. app.env should be updated with the actual database configuration parameters. Also provided the Docker setup to configure the postgres db. DB schema and tables need to be setup before running the service against postgres db. SQL script for the creation of db and tables provided in Docker folder.
+  - GO runtime is needed to run the service. If not available can be downloaded and installed from https://go.dev/doc/install
+
+The service provides the usage with both an in memory db and persistent db (Postgres DB). below persitsance store are supported. Its configured in app.env file defaulted to db.
+  - map based structure (map)
+  - <a href="https://github.com/hashicorp/go-memdb"> go-memdb </a> (memdb)
+  - Postgres db (db)
 ```
 To run the application
  cd back-end-naresh8t7
