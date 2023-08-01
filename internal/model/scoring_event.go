@@ -45,7 +45,7 @@ func (a *GameData) Value() (driver.Value, error) {
 func (a *GameData) Scan(value interface{}) error {
 	b, ok := value.([]byte)
 	if !ok {
-		return errors.New("type assertion to []byte failed for ConfiantMinionObject")
+		return errors.New("type assertion to []byte failed for Data Object")
 	}
 	return json.Unmarshal(b, &a)
 }

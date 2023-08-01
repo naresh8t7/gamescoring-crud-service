@@ -13,6 +13,12 @@ We want you to build a simple baseball and softball score keeping REST API that 
 
 ### Pre-requisites for running the service
   - For running against persistence store, postgres db should be available in the system running on port 5432. app.env should be updated with the actual database configuration parameters. Also provided the Docker setup to configure the postgres db. DB schema and tables need to be setup before running the service against postgres db. SQL script for the creation of db and tables provided in Docker folder.
+  Need to run below commands for setting up db if using docker, assuming docker already installed on the machine.
+  ```
+  docker volume create dbgc
+  docker-compose up -d
+
+  ```
   - GO runtime is needed to run the service. If not available can be downloaded and installed from https://go.dev/doc/install
 
 The service provides the usage with both an in memory db and persistent db (Postgres DB). below persitsance store are supported. Its configured in app.env file defaulted to db.
