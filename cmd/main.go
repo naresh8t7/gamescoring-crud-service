@@ -15,6 +15,7 @@ type RepositoryStore string
 const (
 	MapStore   RepositoryStore = "map"
 	MemDBStore RepositoryStore = "memdb"
+	DBStore    RepositoryStore = "db"
 )
 
 func main() {
@@ -25,8 +26,20 @@ func main() {
 	var repo db.Repository
 	if config.Store == string(MemDBStore) {
 		repo = db.NewMemDBRepository()
-	} else {
+	} else if config.Store == string(MemDBStore) {
 		repo = db.NewRepository()
+	} else {
+		props := db.PostgresDbProperties{
+			DbHost:     config.DbHost,
+			DbPort:     config.DbPort,
+			DbUser:     config.DbUser,
+			DbPassword: config.DbPassword,
+			DbName:     config.DbName,
+		}
+		repo, err = db.NewDBRepository(props)
+		if err != nil {
+			log.Fatalf(" Error connecting db %v", err)
+		}
 	}
 	reg := metrics.New()
 	s := server.NewHttpServer(repo, reg)

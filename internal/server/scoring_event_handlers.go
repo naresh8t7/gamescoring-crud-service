@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"gamescoring/internal/model"
 	"net/http"
@@ -31,7 +32,7 @@ func (h *HttpServer) CreateScoringEvent(w http.ResponseWriter, r *http.Request) 
 	}
 
 	if err := h.validateScoringEvent(req); err != nil {
-		http.Error(w, fmt.Sprintf("Failed to create scoring event, Error in fetching game: %v", err), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("Failed to create scoring event, Error: %v", err), http.StatusBadRequest)
 		return
 	}
 	resp := Response{}
@@ -108,6 +109,13 @@ func (h *HttpServer) DeleteScoringEvent(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *HttpServer) validateScoringEvent(req model.ScoringEvent) error {
+	if req.Data.Code != model.Ball && req.Data.Code != model.Pitch {
+		return errors.New(" Code should be either ball or pitch")
+	}
+	if req.Data.Attributes.Result != model.BallInPlay && req.Data.Attributes.Result != model.Strikeout {
+		return errors.New(" Result should be either ball in play or strike out")
+	}
+
 	_, err := h.repository.Game(req.GameID)
 	return err
 }
