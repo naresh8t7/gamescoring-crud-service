@@ -13,6 +13,10 @@ type mapRepsoitory struct {
 	memdb        map[string]data
 }
 
+func (repository *mapRepsoitory) GetStrikeoutsCountPerGame(gameID string) (int, error) {
+	return 0, nil
+}
+
 func (r *mapRepsoitory) UpsertGame(game *model.Game) (*model.Game, error) {
 	if game == nil {
 		return game, errors.New("Game expected")

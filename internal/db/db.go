@@ -80,7 +80,7 @@ var (
 				Code: "pitch",
 				Attributes: model.Attributes{
 					AdvancesCount: true,
-					Result:        "ball_in_play",
+					Result:        "strike_out",
 				},
 			},
 		},
@@ -97,6 +97,7 @@ type Repository interface {
 	ScoringEvent(id string) (*model.ScoringEvent, error)
 	DeleteScoringEvent(id string) error
 	ListScoringEvents() ([]*model.ScoringEvent, error)
+	GetStrikeoutsCountPerGame(gameID string) (int, error)
 }
 
 func NewRepository() Repository {

@@ -22,6 +22,23 @@ func (h *HttpServer) ListScoringEvents(w http.ResponseWriter, r *http.Request) {
 	writeResponse(w, events)
 }
 
+func (h *HttpServer) GetStrikeOutsPerGame(w http.ResponseWriter, r *http.Request) {
+	defer h.statsCollection("GetStrikeOutsPerGame", time.Now())()
+	vars := mux.Vars(r)
+	gameID := vars["gameID"]
+	if gameID == "" {
+		http.Error(w, "Invalid gameID", http.StatusBadRequest)
+		return
+	}
+	count, err := h.repository.GetStrikeoutsCountPerGame(gameID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
+	writeResponse(w, count)
+}
+
 func (h *HttpServer) CreateScoringEvent(w http.ResponseWriter, r *http.Request) {
 	defer h.statsCollection("CreateScoringEvent", time.Now())()
 	req := model.ScoringEvent{}

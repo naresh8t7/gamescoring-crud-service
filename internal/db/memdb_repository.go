@@ -12,6 +12,10 @@ type memDBRepsository struct {
 	memdb *memdb.MemDB
 }
 
+func (repository *memDBRepsository) GetStrikeoutsCountPerGame(gameID string) (int, error) {
+	return 0, nil
+}
+
 func (db *memDBRepsository) UpsertGame(game *model.Game) (*model.Game, error) {
 	if game == nil {
 		return game, errors.New("Game expected")

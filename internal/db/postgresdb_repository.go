@@ -45,6 +45,24 @@ func NewDBRepository(properties PostgresDbProperties) (Repository, error) {
 	return repo, nil
 }
 
+func (repository *dbRepository) GetStrikeoutsCountPerGame(gameID string) (int, error) {
+	if gameID == "" {
+		return 0, errors.New("id cannot be empty")
+	}
+	_, err := repository.Game(gameID)
+	if err != nil {
+		return 0, err
+	}
+	var count int
+	res := repository.db.Raw("select count(*) from scoring_events where game_id = ? and data->>attributes->>result = ? ", gameID, string(model.Strikeout)).Scan(&count)
+	if res.Error != nil {
+		return 0, res.Error
+	}
+
+	return count, nil
+
+}
+
 func (repository *dbRepository) UpsertGame(game *model.Game) (*model.Game, error) {
 	if game == nil {
 		return game, errors.New("Game expected")
