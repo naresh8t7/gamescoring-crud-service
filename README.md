@@ -29,7 +29,7 @@ The service provides the usage with both an in memory db and persistent db (Post
 ### To run the service
 ```
 To run the application
- cd back-end-naresh8t7
+ cd gamescoring-crud-service
  go run cmd/main.go
  
 ```
@@ -37,7 +37,7 @@ To run the application
 ### To run the tests
 ```
 To run the tests
- cd back-end-naresh8t7
+ cd gamescoring-crud-service
  go test -v ./...
  
 ```
